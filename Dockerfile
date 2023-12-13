@@ -10,4 +10,5 @@ RUN mvn package -DskipTests
 FROM adoptopenjdk:17-jre-hotspot
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
+EXPOSE 9090:9090
 CMD ["java", "-jar", "app.jar"]
