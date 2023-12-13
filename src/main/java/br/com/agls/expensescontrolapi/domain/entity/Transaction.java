@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -43,8 +44,8 @@ public class Transaction {
         private TransactionStatus status;
 
         @NotNull(message = "{field.date.required}")
-        private LocalDateTime createdAt;
+        private LocalDate createdAt;
 
         @NotNull(message = "{field.date.required}")
-        private LocalDateTime updatedAt;
+        private LocalDate updatedAt;
 }
