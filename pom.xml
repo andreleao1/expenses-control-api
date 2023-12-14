@@ -78,6 +78,36 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.11</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludes>
+						<exclude>br/com/agls/expensescontrolapi/domain/entity/*.class</exclude>
+						<exclude>br/com/agls/expensescontrolapi/api/handlererros/*.class</exclude>
+						<exclude>br/com/agls/expensescontrolapi/api/dto/*.class</exclude>
+						<exclude>br/com/agls/expensescontrolapi/domain/enums/*.class</exclude>
+						<exclude>br/com/agls/expensescontrolapi/api/controller/*.class</exclude>
+						<exclude>br/com/agls/expensescontrolapi/util/*.class</exclude>
+						<exclude>br/com/agls/expensescontrolapi/domain/exceptions/*.class</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
