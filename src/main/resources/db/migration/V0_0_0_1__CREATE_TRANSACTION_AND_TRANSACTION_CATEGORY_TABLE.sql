@@ -1,6 +1,6 @@
 CREATE TABLE transaction_category (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) UNIQUE NOT NULL,
     description VARCHAR(255),
     status VARCHAR(8) NOT NULL,
     icon VARCHAR(255),
