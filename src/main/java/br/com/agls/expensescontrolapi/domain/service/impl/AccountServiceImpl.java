@@ -1,6 +1,7 @@
 package br.com.agls.expensescontrolapi.domain.service.impl;
 
 import br.com.agls.expensescontrolapi.domain.entity.Account;
+import br.com.agls.expensescontrolapi.domain.exceptions.BusinessErroToDeleteEntity;
 import br.com.agls.expensescontrolapi.domain.service.AccountService;
 import br.com.agls.expensescontrolapi.infra.repository.AccountRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -58,10 +59,10 @@ public class AccountServiceImpl implements AccountService {
             LOGGER.info("Account {} deleted", account.getId());
         } else if(Boolean.FALSE.equals(account.getArchived())){
             LOGGER.error("Error deleting account {} because it isn't archived", account.getId());
-            throw new IllegalArgumentException("Error deleting account because it isn't archived");
+            throw new BusinessErroToDeleteEntity("Error deleting account because it isn't archived");
         } else if(BigDecimal.valueOf(Double.parseDouble(account.getBalance())).compareTo(BigDecimal.ZERO) != 0){
             LOGGER.error("Error deleting account {} because it has balance", account.getId());
-            throw new IllegalArgumentException("Error deleting account because it has balance");
+            throw new BusinessErroToDeleteEntity("Error deleting account because it has balance");
         }
     }
 
