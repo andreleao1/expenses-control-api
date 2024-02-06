@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/accounts")
@@ -25,17 +27,29 @@ public class AccountController {
         return ResponseEntity.status(201).build();
     }
 
-    @PutMapping("/{accountId}/archive")
-    public ResponseEntity<Void> archive(@PathVariable String accountId) {
-        this.accountService.archive(accountId);
+    @PutMapping("/{accountId}/user/{userId}/archive")
+    public ResponseEntity<Void> archive(@PathVariable String accountId, @PathVariable String userId) {
+        this.accountService.archive(accountId, userId);
 
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{accountId}/unarchive")
-    public ResponseEntity<Void> unarchive(@PathVariable String accountId) {
-        this.accountService.unarchive(accountId);
+    @PutMapping("/{accountId}/user/{userId}/unarchive")
+    public ResponseEntity<Void> unarchive(@PathVariable String accountId, @PathVariable String userId) {
+        this.accountService.unarchive(accountId, userId);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Account>> findAllByUserId(@PathVariable String userId) {
+        return ResponseEntity.ok(this.accountService.getAccountsByUserId(userId));
+    }
+
+    @DeleteMapping("/{accountId}/user/{userId}")
+    public ResponseEntity<Void> delete(@PathVariable String accountId, @PathVariable String userId) {
+        this.accountService.delete(accountId, userId);
+
+        return ResponseEntity.noContent().build();
     }
 }

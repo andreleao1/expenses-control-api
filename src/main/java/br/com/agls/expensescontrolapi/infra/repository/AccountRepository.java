@@ -6,11 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID> {
 
     @Query(value = "SELECT * FROM account WHERE user_id = ?1", nativeQuery = true)
-    List<Account> findByUserId(UUID userId);
+    List<Account> findByUserId(String userId);
+
+    @Query(value = "SELECT * FROM account WHERE account_id = ?1 AND user_id = ?2", nativeQuery = true)
+    Optional<Account> findByIdAndUserId(UUID id, String userId);
 }

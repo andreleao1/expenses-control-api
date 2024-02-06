@@ -8,13 +8,11 @@ public interface AccountService {
 
     void save(Account account);
 
-    void archive(String accountId);
+    void archive(String accountId, String userId);
 
-    void unarchive(String accountId);
+    void unarchive(String accountId, String userId);
 
-    void delete(String accountId);
+    void delete(String accountId, String userId);
 
-    Account getAccountById(String accountId);
-
-    List<Account> getAccountsPerUserId(String userId);
+    List<Account> getAccountsByUserId(String userId);
 }

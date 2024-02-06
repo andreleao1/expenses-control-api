@@ -46,4 +46,19 @@ public class HandlerErrorController extends ResponseEntityExceptionHandler {
                 new HttpHeaders(), status, request);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<Object> illegalArgumentExceptionHandlerError(IllegalArgumentException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        Error responseBody = Error.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .message(ex.getMessage())
+                .path(UriExtractorUtil.execute(request.toString()))
+                .build();
+
+        return handleExceptionInternal(ex, responseBody,
+                new HttpHeaders(), status, request);
+    }
+
 }

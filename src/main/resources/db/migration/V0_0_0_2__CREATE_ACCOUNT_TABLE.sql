@@ -10,4 +10,5 @@ CREATE TABLE account (
     PRIMARY KEY (account_id)
 );
 
--- Criar índice com user_id e user_id + account_id
+CREATE INDEX idx_user_id ON account (user_id);
+CREATE INDEX idx_account_id_user_id ON account (account_id, user_id);
