@@ -1,6 +1,6 @@
 package br.com.agls.expensescontrolapi.domain.service;
 
-import br.com.agls.expensescontrolapi.api.dto.TransactionCategoryResponsePageable;
+import br.com.agls.expensescontrolapi.api.dto.out.TransactionCategoryResponsePageable;
 import br.com.agls.expensescontrolapi.domain.entity.TransactionCategory;
 import org.springframework.data.domain.Pageable;
 

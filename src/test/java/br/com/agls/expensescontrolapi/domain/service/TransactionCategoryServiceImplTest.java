@@ -1,9 +1,8 @@
 package br.com.agls.expensescontrolapi.domain.service;
 
-import br.com.agls.expensescontrolapi.api.dto.TransactionCategoryResponsePageable;
+import br.com.agls.expensescontrolapi.api.dto.out.TransactionCategoryResponsePageable;
 import br.com.agls.expensescontrolapi.domain.entity.TransactionCategory;
 import br.com.agls.expensescontrolapi.domain.enums.TransactionCategoryStatus;
-import br.com.agls.expensescontrolapi.domain.exceptions.ConstraintViolationException;
 import br.com.agls.expensescontrolapi.domain.service.impl.TransactionCategoryServiceImpl;
 import br.com.agls.expensescontrolapi.infra.repository.TransactionCategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

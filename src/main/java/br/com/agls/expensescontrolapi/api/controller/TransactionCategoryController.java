@@ -1,6 +1,6 @@
 package br.com.agls.expensescontrolapi.api.controller;
 
-import br.com.agls.expensescontrolapi.api.dto.TransactionCategoryResponsePageable;
+import br.com.agls.expensescontrolapi.api.dto.out.TransactionCategoryResponsePageable;
 import br.com.agls.expensescontrolapi.domain.entity.TransactionCategory;
 import br.com.agls.expensescontrolapi.domain.service.TransactionCategoryService;
 import jakarta.validation.Valid;

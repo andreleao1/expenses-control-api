@@ -8,16 +8,18 @@ CREATE TABLE transaction_category (
 );
 
 CREATE TABLE "transaction" (
-    id VARCHAR(36) PRIMARY KEY,
+    id uuid NOT NULL,
     description VARCHAR(255),
-    category BIGINT NOT NULL,
+    category_id BIGINT NOT NULL,
     request_id VARCHAR(36) NOT NULL,
+    user_id VARCHAR(36) NOT NULL,
     value DECIMAL(10, 2) NOT NULL,
     type VARCHAR(8) NOT NULL,
     payment_method VARCHAR(11) NOT NULL,
     status VARCHAR(9) NOT NULL,
     created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL
+    updated_at TIMESTAMP NOT NULL,
+    PRIMARY KEY (id)
 );
 
-ALTER TABLE "transaction" ADD CONSTRAINT FK_TRANSACTION_TRANSACTIONCATEGORY FOREIGN KEY (category) REFERENCES transaction_category(id);
+ALTER TABLE "transaction" ADD CONSTRAINT FK_TRANSACTION_TRANSACTIONCATEGORY FOREIGN KEY (category_id) REFERENCES transaction_category(id);

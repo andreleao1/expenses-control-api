@@ -1,4 +1,4 @@
-package br.com.agls.expensescontrolapi.api.dto;
+package br.com.agls.expensescontrolapi.api.dto.out;
 
 import br.com.agls.expensescontrolapi.domain.entity.TransactionCategory;
 import lombok.AllArgsConstructor;
