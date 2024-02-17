@@ -2,6 +2,7 @@ package br.com.agls.expensescontrolapi.it;
 
 import br.com.agls.expensescontrolapi.api.dto.in.AccountRequestDTO;
 import br.com.agls.expensescontrolapi.domain.entity.Account;
+import br.com.agls.expensescontrolapi.util.AccountUtils;
 import com.google.gson.Gson;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,15 +24,14 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static br.com.agls.expensescontrolapi.it.TransactionCategoryControllerIT.postgreSQLContainer;
 import static br.com.agls.expensescontrolapi.it.utils.AccountUtils.generateAccounts;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -65,9 +66,13 @@ public class AccountControllerIT {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    private Account account;
+
     @BeforeEach
     public void setup() {
         List<Account> accounts = generateAccounts();
+
+        account = accounts.get(0);
 
         Flyway flyway = Flyway.configure().dataSource(dataSource).load();
         flyway.migrate();
@@ -94,5 +99,61 @@ public class AccountControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(accountJson))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("Archive account")
+    void whenPutAccountArchiveShouldReturn200() throws Exception {
+        mockMvc.perform(put("/accounts/" + account.getId() + "/user/" + account.getUserId() +"/archive")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Unarchive account")
+    void whenPutAccountUnarchiveShouldReturn200() throws Exception {
+        mockMvc.perform(put("/accounts/" + account.getId() + "/user/" + account.getUserId() +"/unarchive")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Find accounts by user id")
+    void whenGetAccountsByUserIdShouldReturn200() throws Exception {
+        var response = mockMvc.perform(get("/accounts/user/" + account.getUserId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse();
+
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals(new Gson().toJson(AccountUtils.parseToAccountResponseDTO(Collections.singletonList(account))), response.getContentAsString());
+    }
+
+    @Test
+    @DisplayName("Delete account")
+    void whenDeleteAccountShouldReturn200() throws Exception {
+        jdbcTemplate.update("UPDATE account SET balance = ?, archived = ? WHERE account_id = ?", BigDecimal.ZERO.toString(), true, account.getId());
+
+        mockMvc.perform(delete("/accounts/" + account.getId() + "/user/" + account.getUserId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Error deleting account because it isn't archived")
+    void whenDeleteAccountThatIsNotArchivedShouldReturn400() throws Exception {
+        mockMvc.perform(delete("/accounts/" + account.getId() + "/user/" + account.getUserId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Error deleting account because it has balance")
+    void whenDeleteAccountWithBalanceDifferentOfZeroShouldReturn400() throws Exception {
+        jdbcTemplate.update("UPDATE account SET balance = ? WHERE account_id = ?", BigDecimal.ONE.toString(), account.getId());
+
+        mockMvc.perform(delete("/accounts/" + account.getId() + "/user/" + account.getUserId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

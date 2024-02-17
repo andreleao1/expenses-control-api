@@ -1,9 +1,10 @@
 package br.com.agls.expensescontrolapi.api.controller;
 
 import br.com.agls.expensescontrolapi.api.dto.in.AccountRequestDTO;
+import br.com.agls.expensescontrolapi.api.dto.out.AccountResponseDTO;
 import br.com.agls.expensescontrolapi.domain.entity.Account;
 import br.com.agls.expensescontrolapi.domain.service.AccountService;
-import br.com.agls.expensescontrolapi.util.AccountBuilder;
+import br.com.agls.expensescontrolapi.util.AccountUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody AccountRequestDTO accountRequest) {
-        Account account = AccountBuilder.execute(accountRequest);
+        Account account = AccountUtils.buildAccount(accountRequest);
 
         this.accountService.save(account);
 
@@ -42,8 +43,8 @@ public class AccountController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Account>> findAllByUserId(@PathVariable String userId) {
-        return ResponseEntity.ok(this.accountService.getAccountsByUserId(userId));
+    public ResponseEntity<List<AccountResponseDTO>> findAllByUserId(@PathVariable String userId) {
+        return ResponseEntity.ok(AccountUtils.parseToAccountResponseDTO(this.accountService.getAccountsByUserId(userId)));
     }
 
     @DeleteMapping("/{accountId}/user/{userId}")
