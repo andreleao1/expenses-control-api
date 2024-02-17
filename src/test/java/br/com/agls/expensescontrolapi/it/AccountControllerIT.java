@@ -1,5 +1,8 @@
 package br.com.agls.expensescontrolapi.it;
 
+import br.com.agls.expensescontrolapi.api.dto.in.AccountRequestDTO;
+import br.com.agls.expensescontrolapi.domain.entity.Account;
+import com.google.gson.Gson;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,15 +23,21 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static br.com.agls.expensescontrolapi.it.TransactionCategoryControllerIT.postgreSQLContainer;
+import static br.com.agls.expensescontrolapi.it.utils.AccountUtils.generateAccounts;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ContextConfiguration(initializers = {TransactionCategoryControllerIT.Initializer.class})
+@ContextConfiguration(initializers = {AccountControllerIT.Initializer.class})
 @Testcontainers
-public class TransactionCategoryControllerIT {
-
+public class AccountControllerIT {
 
     @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15")
@@ -58,34 +67,32 @@ public class TransactionCategoryControllerIT {
 
     @BeforeEach
     public void setup() {
+        List<Account> accounts = generateAccounts();
+
         Flyway flyway = Flyway.configure().dataSource(dataSource).load();
         flyway.migrate();
 
-        jdbcTemplate.execute("DELETE FROM transaction_category");
-        jdbcTemplate.execute("INSERT INTO transaction_category (name, description, status, icon, color) VALUES ('Category 1', 'Description 1', 0,'Icon 1', 'Color 1')");
-        jdbcTemplate.execute("INSERT INTO transaction_category (name, description, status, icon, color) VALUES ('Category 2', 'Description 2', 0,'Icon 2', 'Color 2')");
-        jdbcTemplate.execute("INSERT INTO transaction_category (name, description, status, icon, color) VALUES ('Category 3', 'Description 3', 0,'Icon 3', 'Color 3')");
+        jdbcTemplate.execute("DELETE FROM account");
+        accounts.forEach(account -> {
+            jdbcTemplate.execute("INSERT INTO account (account_id, user_id, name, icon, balance, archived, created_at, updated_at) VALUES ('" + account.getId() + "', '" + account.getUserId() + "', '" + account.getName() + "', '" + account.getIcon() + "', '" + account.getBalance() + "', " + account.getArchived() + ", '" + account.getCreatedAt() + "', '" + account.getUpdatedAt() + "')");
+        });
     }
 
-    @Test
-    @DisplayName("Save valid transaction category")
-    void whenPostTransactionCategoryThenReturns201() throws Exception {
-        String transactionCategoryJson = "{\"name\":\"Category 4\",\"description\":\"Description 4\",\"status\":\"ACTIVE\",\"icon\":\"Icon 1\",\"color\":\"Color 1\"}";
 
-        mockMvc.perform(post("/transaction-categories")
+    @Test
+    @DisplayName("Save valid account")
+    void whenPostAccountShouldReturn201() throws Exception {
+        AccountRequestDTO accountRequestDTO = AccountRequestDTO.builder()
+                .userId(UUID.randomUUID().toString())
+                .name("Account 4")
+                .icon("Icon 4")
+                .build();
+
+        String accountJson = new Gson().toJson(accountRequestDTO);
+
+        mockMvc.perform(post("/accounts")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(transactionCategoryJson))
+                        .content(accountJson))
                 .andExpect(status().isCreated());
-    }
-
-    @Test
-    @DisplayName("Save invalid transaction category")
-    void whenPostTransactionCategoryGivenInvalidStatusThenReturns400() throws Exception {
-        String transactionCategoryJson = "{\"name\":\"Category 4\",\"description\":\"Description 4\",\"status\":\"FALSE\",\"icon\":\"Icon 1\",\"color\":\"Color 1\"}";
-
-        mockMvc.perform(post("/transaction-categories")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(transactionCategoryJson))
-                .andExpect(status().isBadRequest());
     }
 }
