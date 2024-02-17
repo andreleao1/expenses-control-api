@@ -1,5 +1,6 @@
 package br.com.agls.expensescontrolapi.api.handlererros;
 
+import br.com.agls.expensescontrolapi.domain.exceptions.BusinessErroToDeleteEntity;
 import br.com.agls.expensescontrolapi.domain.exceptions.ConstraintViolationException;
 import br.com.agls.expensescontrolapi.util.UriExtractorUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,6 +35,21 @@ public class HandlerErrorController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> entityNotFoundExceptionHandlerError(EntityNotFoundException ex, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
+
+        Error responseBody = Error.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .message(ex.getMessage())
+                .path(UriExtractorUtil.execute(request.toString()))
+                .build();
+
+        return handleExceptionInternal(ex, responseBody,
+                new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(BusinessErroToDeleteEntity.class)
+    protected ResponseEntity<Object> illegalArgumentExceptionHandlerError(BusinessErroToDeleteEntity ex, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
         Error responseBody = Error.builder()
                 .timestamp(LocalDateTime.now())

@@ -2,6 +2,7 @@ package br.com.agls.expensescontrolapi.it;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -67,7 +68,8 @@ public class TransactionCategoryControllerIT {
     }
 
     @Test
-    void whenPostTransactionCategory_thenReturns201() throws Exception {
+    @DisplayName("Save valid transaction category")
+    void whenPostTransactionCategoryThenReturns201() throws Exception {
         String transactionCategoryJson = "{\"name\":\"Category 4\",\"description\":\"Description 4\",\"status\":\"ACTIVE\",\"icon\":\"Icon 1\",\"color\":\"Color 1\"}";
 
         mockMvc.perform(post("/transaction-categories")
@@ -77,7 +79,8 @@ public class TransactionCategoryControllerIT {
     }
 
     @Test
-    void whenPostTransactionCategoryGivenInvalidStatus_thenReturns400() throws Exception {
+    @DisplayName("Save invalid transaction category")
+    void whenPostTransactionCategoryGivenInvalidStatusThenReturns400() throws Exception {
         String transactionCategoryJson = "{\"name\":\"Category 4\",\"description\":\"Description 4\",\"status\":\"FALSE\",\"icon\":\"Icon 1\",\"color\":\"Color 1\"}";
 
         mockMvc.perform(post("/transaction-categories")
