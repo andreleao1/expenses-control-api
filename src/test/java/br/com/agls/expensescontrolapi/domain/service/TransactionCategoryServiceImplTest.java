@@ -7,17 +7,15 @@ import br.com.agls.expensescontrolapi.domain.service.impl.TransactionCategorySer
 import br.com.agls.expensescontrolapi.infra.repository.TransactionCategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayList;import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,20 +23,20 @@ import static org.mockito.Mockito.*;
 
 class TransactionCategoryServiceImplTest {
 
-    @Mock
     private TransactionCategoryRepository transactionCategoryRepository;
 
-    @InjectMocks
     private TransactionCategoryServiceImpl transactionCategoryService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+
+        transactionCategoryRepository = Mockito.mock(TransactionCategoryRepository.class);
+        transactionCategoryService = new TransactionCategoryServiceImpl(transactionCategoryRepository);
     }
 
     @Test
-    void save_ValidTransactionCategory_ShouldSaveSuccessfully() {
-        // Arrange
+    @DisplayName("Save valid transaction category")
+    void saveValidTransactionCategoryShouldSaveSuccessfully() {
         TransactionCategory transactionCategory = new TransactionCategory();
         transactionCategory.setName("Category 1");
         transactionCategory.setDescription("Category 1 description");
@@ -46,16 +44,14 @@ class TransactionCategoryServiceImplTest {
         transactionCategory.setIcon("icon1");
         transactionCategory.setColor("color1");
 
-        // Act
         transactionCategoryService.save(transactionCategory);
 
-        // Assert
         verify(transactionCategoryRepository, times(1)).save(transactionCategory);
     }
 
     @Test
-    void update_ValidTransactionCategory_ShouldUpdateSuccessfully() {
-        // Arrange
+    @DisplayName("Update valid transaction category")
+    void updateValidTransactionCategoryShouldUpdateSuccessfully() {
         TransactionCategory transactionCategory = new TransactionCategory();
         transactionCategory.setId(1L);
         transactionCategory.setName("Category 1");
@@ -64,10 +60,8 @@ class TransactionCategoryServiceImplTest {
         transactionCategory.setIcon("icon1");
         transactionCategory.setColor("color1");
 
-        // Act
         transactionCategoryService.update(transactionCategory);
 
-        // Assert
         verify(transactionCategoryRepository, times(1)).update(
                 transactionCategory.getName(), transactionCategory.getDescription(),
                 transactionCategory.getStatus(), transactionCategory.getIcon(),
@@ -75,44 +69,38 @@ class TransactionCategoryServiceImplTest {
     }
 
     @Test
-    void listActive_NoActiveCategories_ShouldReturnEmptyList() {
-        // Arrange
+    @DisplayName("Archive transaction category")
+    void listActiveNoActiveCategoriesShouldReturnEmptyList() {
         when(transactionCategoryRepository.findAllByStatusActive()).thenReturn(new ArrayList<>());
 
-        // Act
         List<TransactionCategory> result = transactionCategoryService.listActive();
 
-        // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void listActive_HasActiveCategories_ShouldReturnListOfActiveCategories() {
-        // Arrange
+    @DisplayName("List active transaction categories")
+    void listActiveHasActiveCategoriesShouldReturnListOfActiveCategories() {
         List<TransactionCategory> activeCategories = new ArrayList<>();
         activeCategories.add(new TransactionCategory());
         activeCategories.add(new TransactionCategory());
 
         when(transactionCategoryRepository.findAllByStatusActive()).thenReturn(activeCategories);
 
-        // Act
         List<TransactionCategory> result = transactionCategoryService.listActive();
 
-        // Assert
         assertEquals(activeCategories.size(), result.size());
         assertTrue(result.containsAll(activeCategories));
     }
 
     @Test
-    void list_NoCategories_ShouldReturnEmptyPage() {
-        // Arrange
+    @DisplayName("List all transaction categories")
+    void listNoCategoriesShouldReturnEmptyPage() {
         Pageable pageable = PageRequest.of(0, 10);
         when(transactionCategoryRepository.findAll(pageable)).thenReturn(Page.empty());
 
-        // Act
         TransactionCategoryResponsePageable result = transactionCategoryService.list(pageable);
 
-        // Assert
         assertEquals(0, result.getContent().size());
         assertEquals(0, result.getTotalElements());
         assertEquals(pageable.getPageNumber(), result.getPage());
@@ -120,8 +108,8 @@ class TransactionCategoryServiceImplTest {
     }
 
     @Test
-    void list_HasCategories_ShouldReturnPageWithCategories() {
-        // Arrange
+    @DisplayName("List all transaction categories")
+    void listHasCategoriesShouldReturnPageWithCategories() {
         Pageable pageable = PageRequest.of(0, 10);
         List<TransactionCategory> categories = new ArrayList<>();
         categories.add(new TransactionCategory());
@@ -130,10 +118,8 @@ class TransactionCategoryServiceImplTest {
         Page<TransactionCategory> page = new PageImpl<>(categories, pageable, categories.size());
         when(transactionCategoryRepository.findAll(pageable)).thenReturn(page);
 
-        // Act
         TransactionCategoryResponsePageable result = transactionCategoryService.list(pageable);
 
-        // Assert
         assertEquals(categories.size(), result.getContent().size());
         assertEquals(categories.size(), result.getTotalElements());
         assertEquals(pageable.getPageNumber(), result.getPage());
@@ -142,25 +128,22 @@ class TransactionCategoryServiceImplTest {
     }
 
     @Test
-    void delete_ExistingCategoryId_ShouldDeleteSuccessfully() {
-        // Arrange
+    @DisplayName("Delete existing category")
+    void deleteExistingCategoryIdShouldDeleteSuccessfully() {
         Long categoryId = 1L;
         when(transactionCategoryRepository.findById(categoryId)).thenReturn(Optional.of(new TransactionCategory()));
 
-        // Act
         transactionCategoryService.delete(categoryId);
 
-        // Assert
         verify(transactionCategoryRepository, times(1)).deleteById(categoryId);
     }
 
     @Test
-    void delete_NonExistingCategoryId_ShouldThrowEntityNotFoundException() {
-        // Arrange
+    @DisplayName("Delete non existing category")
+    void deleteNonExistingCategoryIdShouldThrowEntityNotFoundException() {
         Long categoryId = 1L;
         when(transactionCategoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> transactionCategoryService.delete(categoryId));
     }
 }
