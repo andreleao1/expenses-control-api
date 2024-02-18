@@ -25,6 +25,7 @@ public class TransactionBuilder {
                 .status(transactionRequestDTO.getStatus())
                 .requestId(Objects.nonNull(requestParams.getRequestId()) ? requestParams.getRequestId() : UUID.randomUUID().toString())
                 .userId(requestParams.getUserId())
+                .account(transactionRequestDTO.getAccount())
                 .updatedAt(LocalDate.now())
                 .createdAt(LocalDate.now())
                 .build();

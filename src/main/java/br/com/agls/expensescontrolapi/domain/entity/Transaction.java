@@ -48,6 +48,10 @@ public class Transaction {
         @NotNull(message = "{field.status.required}")
         private TransactionStatus status;
 
+        @ManyToOne
+        @JoinColumn(name = "account_id", nullable = false)
+        private Account account;
+
         @NotNull(message = "{field.createdAt.required}")
         private LocalDate createdAt;
 

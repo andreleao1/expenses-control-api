@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -30,6 +31,9 @@ public class Account {
     private String balance;
 
     private Boolean archived;
+
+    @OneToMany(mappedBy = "account")
+    private List<Transaction> transactions;
 
     private LocalDateTime createdAt;
 

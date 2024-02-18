@@ -1,5 +1,6 @@
 package br.com.agls.expensescontrolapi.api.dto.in;
 
+import br.com.agls.expensescontrolapi.domain.entity.Account;
 import br.com.agls.expensescontrolapi.domain.entity.TransactionCategory;
 import br.com.agls.expensescontrolapi.domain.enums.PaymentMethod;
 import br.com.agls.expensescontrolapi.domain.enums.TransactionStatus;
@@ -28,4 +29,7 @@ public class TransactionRequestDTO {
 
     @NotNull
     private final TransactionStatus status;
+
+    @NotNull
+    private final Account account;
 }
