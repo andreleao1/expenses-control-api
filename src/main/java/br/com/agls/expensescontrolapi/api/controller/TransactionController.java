@@ -1,7 +1,7 @@
 package br.com.agls.expensescontrolapi.api.controller;
 
 import br.com.agls.expensescontrolapi.api.dto.in.TransactionRequestDTO;
-import br.com.agls.expensescontrolapi.api.dto.out.TransactionResponseDTO;
+import br.com.agls.expensescontrolapi.api.dto.out.TransactionSavedResponseDTO;
 import br.com.agls.expensescontrolapi.api.dto.out.TransactionResponsePagedDTO;
 import br.com.agls.expensescontrolapi.domain.service.TransactionService;
 import br.com.agls.expensescontrolapi.util.TransactionBuilder;
@@ -19,7 +19,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping
-    public ResponseEntity<TransactionResponseDTO> save(
+    public ResponseEntity<TransactionSavedResponseDTO> save(
             @RequestHeader("x-request-id") String requestId,
             @RequestHeader("x-user-id") String userId,
             @RequestBody @Valid TransactionRequestDTO transactionRequestDTO) {

@@ -1,7 +1,10 @@
 package br.com.agls.expensescontrolapi.domain.service.impl;
 
 import br.com.agls.expensescontrolapi.domain.entity.Account;
+import br.com.agls.expensescontrolapi.domain.entity.Transaction;
+import br.com.agls.expensescontrolapi.domain.enums.TransactionType;
 import br.com.agls.expensescontrolapi.domain.exceptions.BusinessErroToDeleteEntity;
+import br.com.agls.expensescontrolapi.domain.exceptions.InvalidAccountException;
 import br.com.agls.expensescontrolapi.domain.service.AccountService;
 import br.com.agls.expensescontrolapi.infra.repository.AccountRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -63,6 +66,24 @@ public class AccountServiceImpl implements AccountService {
         } else if(BigDecimal.valueOf(Double.parseDouble(account.getBalance())).compareTo(BigDecimal.ZERO) != 0){
             LOGGER.error("Error deleting account {} because it has balance", account.getId());
             throw new BusinessErroToDeleteEntity("Error deleting account because it has balance");
+        }
+    }
+
+    @Override
+    public void updateBalance(Transaction transaction) {
+        try {
+            Account account = getAccountByIdAndUserId(transaction.getAccount().getId().toString(), transaction.getUserId());
+
+            BigDecimal newBalance = transaction.getType().equals(TransactionType.CASH_IN) ?
+                    BigDecimal.valueOf(Double.parseDouble(account.getBalance())).add(transaction.getValue()) :
+                    BigDecimal.valueOf(Double.parseDouble(account.getBalance())).subtract(transaction.getValue());
+
+            LOGGER.info("Updating balance for account {}, old balance {} new balance {}", transaction.getAccount().getId(), account.getBalance(), newBalance);
+
+            this.accountRepository.updateBalance(newBalance.toString(), account.getId());
+        } catch (EntityNotFoundException e) {
+            LOGGER.error("Error trying to update balance, account {} not found", transaction.getAccount().getId());
+            throw new InvalidAccountException(String.format("Account %s not found", transaction.getAccount().getId().toString()));
         }
     }
 

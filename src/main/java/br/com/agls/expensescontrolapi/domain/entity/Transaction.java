@@ -3,6 +3,7 @@ package br.com.agls.expensescontrolapi.domain.entity;
 import br.com.agls.expensescontrolapi.domain.enums.PaymentMethod;
 import br.com.agls.expensescontrolapi.domain.enums.TransactionStatus;
 import br.com.agls.expensescontrolapi.domain.enums.TransactionType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -47,6 +48,14 @@ public class Transaction {
 
         @NotNull(message = "{field.status.required}")
         private TransactionStatus status;
+
+        @JsonBackReference
+        @ManyToOne
+        @JoinColumn(name = "account_id", nullable = false)
+        private Account account;
+
+        @NotNull(message = "{field.transactionDate.required}")
+        private LocalDate transactionDate;
 
         @NotNull(message = "{field.createdAt.required}")
         private LocalDate createdAt;
