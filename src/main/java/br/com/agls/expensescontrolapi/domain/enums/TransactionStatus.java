@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum TransactionStatus {
     MADE("MADE"),
     SCHEDULED("SCHEDULED"),
-    CANCELED("CANCELED");
+    PENDING("PENDING");
 
     private final String value;
 }

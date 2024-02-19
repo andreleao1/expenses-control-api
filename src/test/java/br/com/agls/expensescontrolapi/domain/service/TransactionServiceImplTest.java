@@ -1,6 +1,6 @@
 package br.com.agls.expensescontrolapi.domain.service;
 
-import br.com.agls.expensescontrolapi.api.dto.out.TransactionResponseDTO;
+import br.com.agls.expensescontrolapi.api.dto.out.TransactionSavedResponseDTO;
 import br.com.agls.expensescontrolapi.domain.entity.Transaction;
 import br.com.agls.expensescontrolapi.domain.service.impl.TransactionServiceImpl;
 import br.com.agls.expensescontrolapi.infra.repository.TransactionRepository;
@@ -32,7 +32,7 @@ class TransactionServiceImplTest {
         transaction.setId(UUI);
         when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
 
-        TransactionResponseDTO transactionResponse = transactionService.save(transaction);
+        TransactionSavedResponseDTO transactionResponse = transactionService.save(transaction);
 
         Mockito.verify(transactionRepository, Mockito.times(1)).save(transaction);
         Assertions.assertEquals(UUI.toString(), transactionResponse.getTransactionId());

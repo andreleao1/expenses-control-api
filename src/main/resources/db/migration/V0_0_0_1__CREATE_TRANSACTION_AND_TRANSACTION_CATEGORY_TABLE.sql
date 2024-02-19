@@ -3,6 +3,7 @@ CREATE TABLE transaction_category (
     name VARCHAR(255) UNIQUE NOT NULL,
     description VARCHAR(255),
     status VARCHAR(8) NOT NULL,
+    transaction_type VARCHAR(8) NOT NULL,
     icon VARCHAR(255),
     color VARCHAR(7) DEFAULT '#000000'
 );
@@ -17,6 +18,7 @@ CREATE TABLE "transaction" (
     type VARCHAR(8) NOT NULL,
     payment_method VARCHAR(11) NOT NULL,
     status VARCHAR(9) NOT NULL,
+    transaction_date VARCHAR NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     PRIMARY KEY (id)

@@ -1,11 +1,12 @@
 package br.com.agls.expensescontrolapi.api.dto.out;
 
-public class TransactionResponseDTO {
+public class CategoryDTO {
 
     private String id;
+    private String name;
     private String description;
 
-    private String value;
+    private String icon;
 
-    private String category;
+    private String type;
 }

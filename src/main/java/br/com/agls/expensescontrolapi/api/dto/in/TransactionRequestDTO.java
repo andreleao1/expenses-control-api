@@ -28,7 +28,7 @@ public class TransactionRequestDTO {
     private final PaymentMethod paymentMethod;
 
     @NotNull
-    private final TransactionStatus status;
+    private final String transactionDate;
 
     @NotNull
     private final Account account;

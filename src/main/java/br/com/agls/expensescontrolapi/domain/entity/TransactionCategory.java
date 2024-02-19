@@ -1,6 +1,7 @@
 package br.com.agls.expensescontrolapi.domain.entity;
 
 import br.com.agls.expensescontrolapi.domain.enums.TransactionCategoryStatus;
+import br.com.agls.expensescontrolapi.domain.enums.TransactionType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +27,9 @@ public class TransactionCategory {
     private String name;
 
     private String description;
+
+    @NotNull(message = "{field.transactionType.required}")
+    private TransactionType transactionType;
 
     private TransactionCategoryStatus status;
 

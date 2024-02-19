@@ -82,7 +82,7 @@ public class AccountServiceImpl implements AccountService {
 
             this.accountRepository.updateBalance(newBalance.toString(), account.getId());
         } catch (EntityNotFoundException e) {
-            LOGGER.error("Error trying to update balance, account {} not found", transaction.getAccount().getId().toString());
+            LOGGER.error("Error trying to update balance, account {} not found", transaction.getAccount().getId());
             throw new InvalidAccountException(String.format("Account %s not found", transaction.getAccount().getId().toString()));
         }
     }

@@ -1,5 +1,6 @@
 package br.com.agls.expensescontrolapi.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,7 @@ public class Account {
     private Boolean archived;
 
     @OneToMany(mappedBy = "account")
+    @JsonManagedReference
     private List<Transaction> transactions;
 
     private LocalDateTime createdAt;
