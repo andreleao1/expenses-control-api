@@ -5,12 +5,14 @@ import br.com.agls.expensescontrolapi.api.dto.out.AccountResponseDTO;
 import br.com.agls.expensescontrolapi.domain.entity.Account;
 import br.com.agls.expensescontrolapi.domain.service.AccountService;
 import br.com.agls.expensescontrolapi.util.AccountUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,7 +22,9 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<Void> save(@Valid @RequestBody AccountRequestDTO accountRequest) {
+    public ResponseEntity<Void> save(@Valid @RequestBody AccountRequestDTO accountRequest,
+                                     HttpServletRequest request) {
+        String userId = request.getHeader("x-user-id");
         Account account = AccountUtils.buildAccount(accountRequest);
 
         this.accountService.save(account);
